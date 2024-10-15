@@ -1,0 +1,35 @@
+
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: jewelry
+      POSTGRES_PASSWORD: jewelry1234
+      POSTGRES_DB: jewelry
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: jewelry
+      DB_PASSWORD: jewelry1234
+      DB_NAME: jewelry
+      JWT_SECRET: 97a7d2254416
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  db-data:
+
