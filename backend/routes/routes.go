@@ -14,12 +14,10 @@ func SetupRoutes(router *gin.Engine) {
     router.GET("/products", controllers.GetProducts)
     router.GET("/search", controllers.SearchProducts)
 
-    // مسیرهای مربوط به پنل مدیریت با Middleware
     admin := router.Group("/admin")
     admin.Use(middleware.AuthMiddleware(), middleware.AdminMiddleware())
     admin.POST("/products", controllers.CreateProduct)
 
-    // مسیرهای مربوط به Stories
     stories := router.Group("/stories")
     stories.Use(middleware.AuthMiddleware())
     stories.POST("/", controllers.CreateStory)

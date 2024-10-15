@@ -7,7 +7,6 @@ const api = axios.create({
     baseURL: API_URL,
 });
 
-// افزودن توکن به هدر درخواست‌ها
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {

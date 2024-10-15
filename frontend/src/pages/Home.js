@@ -29,7 +29,6 @@ const Home = () => {
     };
 
     const handleStoryCreated = (newStory) => {
-        // می‌توانید اینجا لیست داستان‌ها را به‌روزرسانی کنید
     };
 
     useEffect(() => {
