@@ -5,8 +5,8 @@ import (
     "net/http"
 
     "github.com/gin-gonic/gin"
-    "your_project_name/config"
-    "your_project_name/models"
+    "github.com/moeinshahcheraghi/jewelry/backend/config"
+    "github.com/moeinshahcheraghi/jewelry/backend/models"
 )
 
 type CreateStoryInput struct {

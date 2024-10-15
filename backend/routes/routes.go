@@ -2,8 +2,8 @@
 package routes
 
 import (
-    "your_project_name/controllers"
-    "your_project_name/middleware"
+    "github.com/moeinshahcheraghi/jewelry/backend/controllers"
+    "github.com/moeinshahcheraghi/jewelry/backend/middleware"
 
     "github.com/gin-gonic/gin"
 )

@@ -5,8 +5,8 @@ import (
     "net/http"
 
     "github.com/gin-gonic/gin"
-    "your_project_name/models"
-    "your_project_name/config"
+    "github.com/moeinshahcheraghi/jewelry/backend/models"
+    "github.com/moeinshahcheraghi/jewelry/backend/config"
 )
 
 func CreateProduct(c *gin.Context) {
