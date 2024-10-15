@@ -1,4 +1,4 @@
-module github.com/moeinshahcheraghi/my-ecommerce-app/backend
+module github.com/moeinshahcheraghi/jewelry/backend
 
 go 1.20
 

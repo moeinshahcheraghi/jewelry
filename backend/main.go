@@ -3,9 +3,9 @@ package main
 
 import (
     "github.com/gin-gonic/gin"
-    "github.com/yourusername/my-ecommerce-app/backend/config"
-    "github.com/yourusername/my-ecommerce-app/backend/models"
-    "github.com/yourusername/my-ecommerce-app/backend/routes"
+    " github.com/moeinshahcheraghi/jewelry/backend/config"
+    " github.com/moeinshahcheraghi/jewelry/backend/models"
+    " github.com/moeinshahcheraghi/jewelry/backend/routes"
 )
 
 func main() {
