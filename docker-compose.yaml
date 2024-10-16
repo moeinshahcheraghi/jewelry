@@ -13,11 +13,11 @@ services:
     build:
       context: ./backend
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: jewelry
-      DB_PASSWORD: jewelry1234
-      DB_NAME: jewelry
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: jewelry
+      DATABASE_PASSWORD: jewelry1234
+      DATABASE_NAME: jewelry
       JWT_SECRET: 97a7d2254416
     depends_on:
       - db
