@@ -1,6 +1,7 @@
 package main
 
 import (
+    "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"
     "github.com/moeinshahcheraghi/jewelry/backend/controllers"
     "github.com/moeinshahcheraghi/jewelry/backend/database"
@@ -10,6 +11,14 @@ import (
 func main() {
     database.Connect()
     router := gin.Default()
+
+    // CORS configuration
+    config := cors.DefaultConfig()
+    config.AllowOrigins = []string{"http://localhost:3000"} // Frontend URL
+    config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+    config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
+
+    router.Use(cors.New(config))
 
     // Public routes
     router.POST("/api/register", controllers.Register)
