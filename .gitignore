@@ -1,0 +1,6 @@
+# Ignore database data directory
+db-data/
+
+# Ignore environment variable file
+.env
+

@@ -1,58 +1,134 @@
 package main
 
 import (
-    "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"
-    "github.com/moeinshahcheraghi/jewelry/backend/controllers"
-    "github.com/moeinshahcheraghi/jewelry/backend/database"
-    "github.com/moeinshahcheraghi/jewelry/backend/middleware"
+    "gorm.io/driver/postgres"
+    "gorm.io/gorm"
+    "log"
+    "os"
 )
 
-func main() {
-    database.Connect()
-    router := gin.Default()
+type Post struct {
+    ID      uint   `json:"id" gorm:"primaryKey"`
+    Title   string `json:"title"`
+    Content string `json:"content"`
+}
 
-    // CORS configuration
-    config := cors.DefaultConfig()
-    config.AllowOrigins = []string{"http://localhost:3000"} // Frontend URL
-    config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-    config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
+var db *gorm.DB
 
-    router.Use(cors.New(config))
+// بارگذاری تنظیمات و اتصال به پایگاه داده
+func connectDatabase() {
+    var err error
 
-    // Public routes
-    router.POST("/api/register", controllers.Register)
-    router.POST("/api/login", controllers.Login)
+    // بارگذاری اطلاعات از متغیرهای محیطی
+    host := os.Getenv("DB_HOST")
+    user := os.Getenv("DB_USER")
+    password := os.Getenv("DB_PASSWORD")
+    dbname := os.Getenv("DB_NAME")
+    port := os.Getenv("DB_PORT")
 
-    // Protected routes
-    protected := router.Group("/api")
-    protected.Use(middleware.AuthMiddleware())
-    {
-        // Admin routes
-        protected.GET("/users", controllers.GetUsers)
-        protected.PUT("/users/:id/promote", controllers.PromoteToAdmin)
-        protected.DELETE("/users/:id", controllers.DeleteUser)
-
-        // Stories
-        protected.POST("/stories", controllers.CreateStory)
-        protected.GET("/stories", controllers.GetStories)
-
-        // Complaints
-        protected.POST("/complaints", controllers.CreateComplaint)
-        protected.GET("/complaints", controllers.GetComplaints)
-
-        // Suggestions
-        protected.POST("/suggestions", controllers.CreateSuggestion)
-        protected.GET("/suggestions", controllers.GetSuggestions)
-
-        // Products
-        protected.POST("/products", controllers.CreateProduct)
-        protected.GET("/products", controllers.GetProducts)
-
-        // Search
-        protected.GET("/search", controllers.Search)
+    // ساخت رشته اتصال به پایگاه داده
+    dsn := "host=" + host + " user=" + user + " password=" + password + " dbname=" + dbname + " port=" + port + " sslmode=disable"
+    
+    db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    if err != nil {
+        log.Fatalf("Could not connect to the database: %v", err)
+    } else {
+        log.Println("Connected to the database successfully!")
     }
+}
 
-    router.Run(":8080")
+// تنظیمات روت‌ها
+func setupRouter() *gin.Engine {
+    r := gin.Default()
+
+    // Endpoint برای دریافت همه پست‌ها
+    r.GET("/api/posts", func(c *gin.Context) {
+        var posts []Post
+        if err := db.Find(&posts).Error; err != nil {
+            log.Printf("Error retrieving posts: %v", err)
+            c.JSON(500, gin.H{"error": "Could not retrieve posts"})
+            return
+        }
+        c.JSON(200, posts)
+    })
+
+    // Endpoint برای دریافت یک پست خاص
+    r.GET("/api/posts/:id", func(c *gin.Context) {
+        var post Post
+        if err := db.First(&post, c.Param("id")).Error; err != nil {
+            log.Printf("Post not found: %v", err)
+            c.JSON(404, gin.H{"error": "Post not found"})
+            return
+        }
+        c.JSON(200, post)
+    })
+
+    // Endpoint برای ایجاد پست جدید
+    r.POST("/api/posts", func(c *gin.Context) {
+        var newPost Post
+        if err := c.ShouldBindJSON(&newPost); err != nil {
+            log.Printf("Error binding JSON: %v", err)
+            c.JSON(400, gin.H{"error": "Invalid request"})
+            return
+        }
+
+        if err := db.Create(&newPost).Error; err != nil {
+            log.Printf("Error creating post: %v", err)
+            c.JSON(500, gin.H{"error": "Could not create post"})
+            return
+        }
+
+        c.JSON(201, newPost)
+    })
+
+    // Endpoint برای به‌روزرسانی پست
+    r.PUT("/api/posts/:id", func(c *gin.Context) {
+        var post Post
+        if err := db.First(&post, c.Param("id")).Error; err != nil {
+            log.Printf("Post not found: %v", err)
+            c.JSON(404, gin.H{"error": "Post not found"})
+            return
+        }
+
+        var updatedPost Post
+        if err := c.ShouldBindJSON(&updatedPost); err != nil {
+            log.Printf("Error binding JSON: %v", err)
+            c.JSON(400, gin.H{"error": "Invalid request"})
+            return
+        }
+
+        post.Title = updatedPost.Title
+        post.Content = updatedPost.Content
+
+        if err := db.Save(&post).Error; err != nil {
+            log.Printf("Error updating post: %v", err)
+            c.JSON(500, gin.H{"error": "Could not update post"})
+            return
+        }
+
+        c.JSON(200, post)
+    })
+
+    // Endpoint برای حذف پست
+    r.DELETE("/api/posts/:id", func(c *gin.Context) {
+        if err := db.Delete(&Post{}, c.Param("id")).Error; err != nil {
+            log.Printf("Error deleting post: %v", err)
+            c.JSON(500, gin.H{"error": "Could not delete post"})
+            return
+        }
+        c.Status(204)
+    })
+
+    return r
+}
+
+// تابع اصلی
+func main() {
+    connectDatabase()
+    r := setupRouter()
+    if err := r.Run(":8080"); err != nil {
+        log.Fatalf("Failed to run server: %v", err)
+    }
 }
 

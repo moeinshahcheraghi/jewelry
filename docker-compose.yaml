@@ -13,14 +13,15 @@ services:
     build:
       context: ./backend
     environment:
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      DATABASE_USER: jewelry
-      DATABASE_PASSWORD: jewelry1234
-      DATABASE_NAME: jewelry
-      JWT_SECRET: 97a7d2254416
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
     depends_on:
       - db
+    env_file:
+      - .env
 
   frontend:
     build:
