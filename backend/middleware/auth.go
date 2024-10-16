@@ -1,12 +1,12 @@
-// backend/middleware/auth.go
 package middleware
 
 import (
+    "fmt"
     "net/http"
     "strings"
 
-    "github.com/dgrijalva/jwt-go"
     "github.com/gin-gonic/gin"
+    "github.com/golang-jwt/jwt/v4"
 )
 
 var jwtSecret = []byte("your_secret_key")
@@ -29,7 +29,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
         token, err := jwt.Parse(parts[1], func(token *jwt.Token) (interface{}, error) {
             if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-                return nil, gin.Error{Err: err, Type: gin.ErrorTypePublic}
+                return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
             }
             return jwtSecret, nil
         })
