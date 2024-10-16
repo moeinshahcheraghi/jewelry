@@ -1,30 +1,19 @@
-// frontend/src/components/Navbar.js
-import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext'; // Corrected import
 
 const Navbar = () => {
-    const history = useHistory();
-
-    const logout = () => {
-        localStorage.removeItem('token');
-        history.push('/login');
-    };
-
-    const isAuthenticated = !!localStorage.getItem('token');
+    const { user, logout } = useContext(AuthContext);
 
     return (
         <nav>
-            <Link to="/">Home</Link>
-            {isAuthenticated ? (
-                <>
-                    <Link to="/admin">Admin</Link>
+            <h1>My Jewelry Store</h1>
+            {user ? (
+                <div>
+                    <span>Welcome, {user.name}</span>
                     <button onClick={logout}>Logout</button>
-                </>
+                </div>
             ) : (
-                <>
-                    <Link to="/login">Login</Link>
-                    <Link to="/register">Register</Link>
-                </>
+                <button>Login</button>
             )}
         </nav>
     );
