@@ -2,8 +2,6 @@ FROM golang:1.21-alpine AS build
 WORKDIR /src
 COPY go.mod  .
 RUN apk update && apk add --no-cache git
-ARG http_proxy=http://45.94.254.18:43129
-ARG https_proxy=http://45.94.254.18:43129
 RUN go mod download
 COPY . .
 RUN go build -o /app/main ./main.go

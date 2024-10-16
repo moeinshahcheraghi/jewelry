@@ -4,7 +4,7 @@ import (
     "gorm.io/gorm"
 )
 
-type Story struct {
+type Suggestion struct {
     gorm.Model
     Content string `gorm:"type:text;not null" json:"content" validate:"required"`
     UserID  uint   `json:"user_id"`
