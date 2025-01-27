@@ -1,8 +1,8 @@
 package controllers
 
 import (
-    "net/http"
     "log"
+    "net/http"
 
     "github.com/gin-gonic/gin"
     "jewelry/backend/config"
@@ -78,7 +78,6 @@ func UpdatePost(c *gin.Context) {
         return
     }
 
-    // دریافت مجدد پست به‌روزرسانی شده
     if err := config.DB.First(&post, c.Param("id")).Error; err != nil {
         log.Println("Error retrieving updated post:", err)
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving updated post"})

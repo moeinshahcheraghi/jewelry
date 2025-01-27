@@ -1,15 +1,15 @@
 package config
 
 import (
-    "log"
-    "os"
-
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
+    "log"
+    "os"
 )
 
+var DB *gorm.DB
+
 func ConnectDatabase() (*gorm.DB, error) {
-    // خواندن متغیرهای محیطی
     dbHost := os.Getenv("DB_HOST")
     dbUser := os.Getenv("DB_USER")
     dbPassword := os.Getenv("DB_PASSWORD")
@@ -17,12 +17,14 @@ func ConnectDatabase() (*gorm.DB, error) {
     dbPort := os.Getenv("DB_PORT")
 
     dsn := "host=" + dbHost + " user=" + dbUser + " password=" + dbPassword + " dbname=" + dbName + " port=" + dbPort + " sslmode=disable"
-    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    var err error
+    DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
         log.Fatalf("Could not connect to the database: %v", err)
         return nil, err
     }
 
-    return db, nil
+    log.Println("Database connection established successfully.")
+    return DB, nil
 }
 

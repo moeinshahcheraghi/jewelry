@@ -1,3 +1,4 @@
+// migrations/migrate.go
 package migrations
 
 import (
@@ -7,8 +8,7 @@ import (
 )
 
 func Migrate(db *gorm.DB) error {
-    // اجرای Migration
-    err := db.AutoMigrate(&models.Post{})
+    err := db.AutoMigrate(&models.User{}, &models.Post{})  
     if err != nil {
         log.Printf("Migration failed: %v", err)
         return err

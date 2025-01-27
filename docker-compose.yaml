@@ -1,7 +1,7 @@
 
 services:
   db:
-    image: postgres:14
+    image: docker.arvancloud.ir/postgres:14
     environment:
       POSTGRES_USER: jewelry
       POSTGRES_PASSWORD: jewelry1234
@@ -18,18 +18,13 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       DB_PORT: ${DB_PORT}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - db
     env_file:
       - .env
-
-  frontend:
-    build:
-      context: ./frontend
     ports:
-      - "3000:80"
-    depends_on:
-      - backend
+      - 8080:8080
 
 volumes:
   db-data:
